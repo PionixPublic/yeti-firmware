@@ -78,7 +78,7 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
     checkOverCurrent(events);
 
     // update currentState from Car reading if signal is stable
-    if (readFromCar(&currentState)) {
+    if (teslaFilter_readFromCar(&currentState)) {
         if (replugging_start) {
             replugging_start = false;
             replugging_in_progress = true;
@@ -94,7 +94,7 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
                 replugging_in_progress_HI = true;
             }
             if (replugging_in_progress_HI && (replugging_timer_HI -= 50) <= 0) {
-            	enable();
+                enable();
                 events.push(Event::EvseReplugFinished);
                 replugging_in_progress_HI = false;
                 replugging_in_progress = false;
@@ -328,6 +328,55 @@ void ControlPilot::disable() {
     control_pilot_hal.disableCP();
 }
 
+bool ControlPilot::teslaFilter_readFromCar(CPState *cp) {
+    // Filter out weird tesla special sequence at the start of HLC session:
+    // Tesla does 5 short transitions B->C->D->DF->D->C->B or similar when 5%
+    // PWM starts. During the first 10 seconds after 5% PWM was enabled, state
+    // B->C/D/DF transitions need to persist for at least one second.
+    CPState new_cp = *cp;
+
+    // // Was PWM enabled since the last run of this function?
+    if (!tesla_last_pwm_running && pwmRunning) {
+        // start timer
+        teslaPwmTimer = HAL_GetTick();
+        teslaPwmTimerStarted = true;
+    }
+    tesla_last_pwm_running = pwmRunning;
+
+    // Are we within the first 8 seconds after 5% PWM was enabled?
+    if (teslaPwmTimerStarted && pwmRunning &&
+        (HAL_GetTick() - teslaPwmTimer < 8000) && pwmDutyCycle > 0.04 &&
+        pwmDutyCycle < 0.06) {
+
+        if (readFromCar(&new_cp)) {
+
+            if (tesla_filter_last_cp != new_cp) {
+                teslaTick = HAL_GetTick();
+                teslaTickStarted = true;
+            }
+            tesla_filter_last_cp = new_cp;
+
+            if (teslaTickStarted && (HAL_GetTick() - teslaPwmTimer < 1000)) {
+                // Ignore transition if it does not last for 1000ms
+                return false;
+            } else {
+                teslaTickStarted = false;
+                *cp = new_cp;
+                return true;
+            }
+
+        } else {
+            // readFromCar could not read a stable state
+            return false;
+        }
+
+    } else {
+        teslaPwmTimerStarted = false;
+        // Do nothing here
+        return readFromCar(cp);
+    }
+}
+
 // Translate ADC readings for lo and hi part of PWM to IEC61851 states.
 // returns false if signal is unstable/invalid and cp argument was not
 // updated.
@@ -354,8 +403,9 @@ bool ControlPilot::readFromCar(CPState *cp) {
             cpLo = control_pilot_hal.getCPLo();
             cpHi = control_pilot_hal.getCPHi();
             if (*cp == CPState::Disabled)
-            	return true; // stay in Disabled independent of measurement
-            else cp_signal_valid = true;
+                return true; // stay in Disabled independent of measurement
+            else
+                cp_signal_valid = true;
         }
     }
 

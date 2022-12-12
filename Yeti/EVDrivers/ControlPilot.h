@@ -81,12 +81,12 @@ public:
         Error_Relais,
         Error_RCD,
         Error_VentilationNotAvailable,
-		Error_OverCurrent,
-		EnterBCD,
-		LeaveBCD,
-		PermanentFault,
-		EvseReplugStarted,
-		EvseReplugFinished
+        Error_OverCurrent,
+        EnterBCD,
+        LeaveBCD,
+        PermanentFault,
+        EvseReplugStarted,
+        EvseReplugFinished
     };
 
     void pwmOn(float dc);
@@ -126,6 +126,15 @@ private:
 
     CPState currentState;
     CPState lastState;
+
+    bool teslaFilter_readFromCar(CPState *cp);
+    CPState tesla_filter_last_cp{CPState::Disabled};
+    uint32_t teslaTick{0};
+    bool teslaTickStarted{false};
+
+    bool tesla_last_pwm_running{false};
+    uint32_t teslaPwmTimer{0};
+    bool teslaPwmTimerStarted{false};
 
     bool readFromCar(CPState *cp);
 
