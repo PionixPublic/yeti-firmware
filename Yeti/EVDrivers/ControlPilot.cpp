@@ -343,9 +343,9 @@ bool ControlPilot::teslaFilter_readFromCar(CPState *cp) {
     }
     tesla_last_pwm_running = pwmRunning;
 
-    // Are we within the first 8 seconds after 5% PWM was enabled?
+    // Are we within the first 16 seconds after 5% PWM was enabled?
     if (teslaPwmTimerStarted && pwmRunning &&
-        (HAL_GetTick() - teslaPwmTimer < 8000) && pwmDutyCycle > 0.04 &&
+        (HAL_GetTick() - teslaPwmTimer < 16000) && pwmDutyCycle > 0.04 &&
         pwmDutyCycle < 0.06) {
 
         if (readFromCar(&new_cp)) {
@@ -356,8 +356,8 @@ bool ControlPilot::teslaFilter_readFromCar(CPState *cp) {
             }
             tesla_filter_last_cp = new_cp;
 
-            if (teslaTickStarted && (HAL_GetTick() - teslaPwmTimer < 1000)) {
-                // Ignore transition if it does not last for 1000ms
+            if (teslaTickStarted && (HAL_GetTick() - teslaTick < 1500)) {
+                // Ignore transition if it does not last for 1500ms
                 return false;
             } else {
                 teslaTickStarted = false;
