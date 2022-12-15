@@ -28,6 +28,9 @@
 // NOTE: This should be disabled in production environment and replaced with a secure boot loader
 #define ALLOW_ROM_BOOTLOADER
 
+// Ignore TESLA's funny CP sequence B->C->DF->B 5 times
+//#define IGNORE_TESLA_SPECIAL_SEQUENCE
+
 /*
  * Enable debug printf's in the threads:
  * Be careful with enableing printf's in multiple threads. This can hard fault

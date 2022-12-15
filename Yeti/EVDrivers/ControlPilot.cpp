@@ -78,7 +78,11 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
     checkOverCurrent(events);
 
     // update currentState from Car reading if signal is stable
+#ifdef IGNORE_TESLA_SPECIAL_SEQUENCE
     if (teslaFilter_readFromCar(&currentState)) {
+#else
+    if (readFromCar(&currentState)) {
+#endif
         if (replugging_start) {
             replugging_start = false;
             replugging_in_progress = true;
