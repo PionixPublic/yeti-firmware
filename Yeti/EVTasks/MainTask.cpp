@@ -30,6 +30,8 @@ extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
 #endif
 volatile extern int reset_flags;
+float hard_limit;
+int reset_cause_int;
 
 /// @brief  Possible STM32 system reset causes
 reset_cause_t reset_cause_get(void);
