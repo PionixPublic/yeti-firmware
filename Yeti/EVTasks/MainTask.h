@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-float hard_limit;
+
 
 typedef enum reset_cause_e
 {
@@ -29,7 +29,6 @@ typedef enum reset_cause_e
 	RESET_CAUSE_OPTION_BYTE_LOADER_RESET
 } reset_cause_t;
 
-int reset_cause_int;
 
 void StartMainTask(void *argument);
 
