@@ -164,8 +164,7 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
                 evSimplifiedMode = false;
             }
 
-            if (lastState == CPState::A || lastState == CPState::E ||
-                lastState == CPState::F) {
+            if (lastState == CPState::E || lastState == CPState::F) {
                 events.push(Event::EnterBCD);
             }
 
@@ -183,8 +182,7 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
             if (lastState == CPState::B) {
                 events.push(Event::CarRequestedPower);
             }
-            if (lastState == CPState::A || lastState == CPState::E ||
-                lastState == CPState::F) {
+            if (lastState == CPState::E || lastState == CPState::F) {
                 events.push(Event::EnterBCD);
             }
 
@@ -221,11 +219,12 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
                 events.push(Event::CarRequestedPower);
                 evSimplifiedMode = true;
             }
+
             if (lastState == CPState::B) {
                 events.push(Event::CarRequestedPower);
             }
-            if (lastState == CPState::A || lastState == CPState::E ||
-                lastState == CPState::F) {
+
+            if (lastState == CPState::E || lastState == CPState::F) {
                 events.push(Event::EnterBCD);
             }
 
@@ -334,9 +333,9 @@ void ControlPilot::disable() {
 
 bool ControlPilot::teslaFilter_readFromCar(CPState *cp) {
     // Filter out weird tesla special sequence at the start of HLC session:
-    // Tesla does 5 short transitions B->C->D->DF->D->C->B or similar when 5%
-    // PWM starts. During the first 10 seconds after 5% PWM was enabled, state
-    // B->C/D/DF transitions need to persist for at least one second.
+    // Tesla does 5 short transitions B->C-DF->C->B or similar when 5%
+    // PWM starts. During the first 16 seconds after 5% PWM was enabled, state
+    // B->C/D/DF transitions need to persist for at least 1.5 second.
     CPState new_cp = *cp;
 
     // // Was PWM enabled since the last run of this function?

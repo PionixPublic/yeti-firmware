@@ -12,23 +12,27 @@
 
 // define to compile for self test mode instead of normal working mode.
 // Do NOT connect car or AC voltage in self test mode!
-//#define SELFTEST_MODE
-//#define EMITEST_RELAIS_PWM
+// #define SELFTEST_MODE
+// #define EMITEST_RELAIS_PWM
 
 // define this to enable workarounds for HW bugs in R0 devboard
-//#define EVDEVBOARD_R0_WORKAROUNDS
+// #define EVDEVBOARD_R0_WORKAROUNDS
 
 // One or Three phase on startup?
 #define USE_THREE_PHASES true
 
 // NOTE: In the following countries automatic reclosing of protection means is
 // not allowed: DK, UK, FR, CH uncomment for these countries
-//#define DISABLE_RCD_RECLOSING
+// #define DISABLE_RCD_RECLOSING
 
-// NOTE: This should be disabled in production environment and replaced with a secure boot loader
+// NOTE: This should be disabled in production environment and replaced with a
+// secure boot loader
 #define ALLOW_ROM_BOOTLOADER
 
-// Ignore TESLA's funny CP sequence B->C->DF->B 5 times
+// Ignore TESLA's funny CP sequence B->C->DF->B 5 times.
+// That helps is SLAC is too slow to respond to CM_SLAC_PARM.REQ on the first
+// try. Note that this may cause other problems as events in the first 16
+// seconds are delayed by 1.5 seconds
 //#define IGNORE_TESLA_SPECIAL_SEQUENCE
 
 /*
@@ -38,14 +42,12 @@
  * Disable all for release!
  * */
 
-//#define REMOTECONTROL_CPP_ENABLE_PRINTF
-//#define ADE7978_CPP_ENABLE_PRINTF
-//#define CHARGER_CPP_ENABLE_PRINTF
-//#define MGMTLINK_CPP_ENABLE_PRINTF
-//#define RCD_CPP_ENABLE_PRINTF
-//#define SPIBUS_CPP_ENABLE_PRINTF
-//#define FINE_GRAIN_DEBUG_PRINTF
+// #define REMOTECONTROL_CPP_ENABLE_PRINTF
+// #define ADE7978_CPP_ENABLE_PRINTF
+// #define CHARGER_CPP_ENABLE_PRINTF
+// #define MGMTLINK_CPP_ENABLE_PRINTF
+// #define RCD_CPP_ENABLE_PRINTF
+// #define SPIBUS_CPP_ENABLE_PRINTF
+// #define FINE_GRAIN_DEBUG_PRINTF
 
 #endif // SRC_EVDRIVERS_EVCONFIG_H_
-
-
