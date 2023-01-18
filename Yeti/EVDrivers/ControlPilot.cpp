@@ -123,11 +123,6 @@ std::queue<ControlPilot::Event> ControlPilot::runStateMachine() {
             evSimplifiedMode = false;
             ventilatedChargingActive = false;
 
-            if (lastState == CPState::B || lastState == CPState::C ||
-                lastState == CPState::D) {
-                events.push(Event::LeaveBCD);
-            }
-
             // Table A.6: Sequence 2.1 Unplug at state Bx (or any other
             // state) Table A.6: Sequence 2.2 Unplug at state Cx, Dx
             if (lastState != CPState::A && lastState != CPState::Disabled &&
