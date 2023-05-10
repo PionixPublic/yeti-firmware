@@ -779,13 +779,13 @@ void Charger::updatePowerMeter() {
         d.temp[ADE7978::L1] = (float)power_meter.getTEMP(ADE7978::L1) *
                                   ADE7978::TEMPERATURE_CELSIUS_SCALE +
                               ADE7978::TEMPERATURE_CELSIUS_OFFSET;
-        d.temp[ADE7978::L2] = (float)power_meter.getTEMP(ADE7978::L1) *
+        d.temp[ADE7978::L2] = (float)power_meter.getTEMP(ADE7978::L2) *
                                   ADE7978::TEMPERATURE_CELSIUS_SCALE +
                               ADE7978::TEMPERATURE_CELSIUS_OFFSET;
-        d.temp[ADE7978::L3] = (float)power_meter.getTEMP(ADE7978::L1) *
+        d.temp[ADE7978::L3] = (float)power_meter.getTEMP(ADE7978::L3) *
                                   ADE7978::TEMPERATURE_CELSIUS_SCALE +
                               ADE7978::TEMPERATURE_CELSIUS_OFFSET;
-        d.temp[ADE7978::N] = (float)power_meter.getTEMP(ADE7978::L1) *
+        d.temp[ADE7978::N] = (float)power_meter.getTEMP(ADE7978::N) *
                                  ADE7978::TEMPERATURE_CELSIUS_SCALE +
                              ADE7978::TEMPERATURE_CELSIUS_OFFSET;
 #ifdef CHARGER_CPP_ENABLE_PRINTF
