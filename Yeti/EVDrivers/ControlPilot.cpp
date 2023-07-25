@@ -332,6 +332,10 @@ bool ControlPilot::teslaFilter_readFromCar(CPState *cp) {
 	// Tesla does 5 short transitions B->C-DF->C->B or similar when 5%
 	// PWM starts. During the first 16 seconds after 5% PWM was enabled, state
 	// B->C/D/DF transitions need to persist for at least 1.5 second.
+	// Note that this should not be used. It is important to fix this at HLC,
+	// namely only enable PWM if SLAC and PLC modem are really ready to receive
+	// the first SLAC packet and reply to it. In that case Tesla never sends the
+	// special sequence.
 	CPState new_cp = *cp;
 
 	// // Was PWM enabled since the last run of this function?
@@ -409,15 +413,17 @@ bool ControlPilot::readFromCar(CPState *cp) {
 	}
 
 	if (cp_signal_valid) {
+		// CP-PE short or signal somehow gone. According to the norm both high and low voltage should be 0 (full short before diode).
+		// Some test equipment implement that wrong however, shorting CP after the diode resulting in an undefined state (it would be E2).
+		// This means we only check the hi part here.
+		//if (isVoltageInRange(cpLo, 0.) && isVoltageInRange(cpHi, 0.))
+		if (isVoltageInRange(cpHi, 0.)) {
+			*cp = CPState::E;
+			return true;
+		}
 		// sth is wrong with negative signal
 		if (pwmRunning && !isVoltageInRange(cpLo, -12.)) {
-			// CP-PE short or signal somehow gone. According to the norm both high and low voltage should be 0 (full short before diode).
-			// Some test equipment implement that wrong however, shorting CP after the diode resulting in an undefined state (it would be E2).
-			// This means we only check the hi part here.
-			//if (isVoltageInRange(cpLo, 0.) && isVoltageInRange(cpHi, 0.))
-			if (isVoltageInRange(cpHi, 0.)) {
-				*cp = CPState::E;
-			} else if (isVoltageInRange(cpHi + cpLo, 0.)) {
+			if (isVoltageInRange(cpHi + cpLo, 0.)) {
 				// Diode fault
 				*cp = CPState::DF;
 			} else {
