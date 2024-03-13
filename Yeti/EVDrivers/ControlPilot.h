@@ -12,6 +12,7 @@
 
 #include "ControlPilot_HAL.h"
 #include "PowerSwitch.h"
+#include "ADE7978.h"
 #include "Rcd.h"
 #include "cmsis_os.h"
 #include "main.h"
@@ -23,7 +24,8 @@
 class ControlPilot: public Task {
 public:
 	ControlPilot(ControlPilot_HAL &_control_pilot_hal,
-			RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd);
+			RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd,
+			ADE7978 &_power_meter);
 	virtual ~ControlPilot();
 
 	void pwm_on(float dc);
@@ -53,6 +55,7 @@ private:
 	RemoteControlTX &remote_tx;
 	PowerSwitch &power_switch;
 	Rcd &rcd;
+	ADE7978 &power_meter;
 
 	virtual void main();
 
@@ -111,8 +114,8 @@ private:
 	bool last_pwm_running { false };
 	bool power_on_allowed { false };
 
-	PpState last_pp_state{PpState::PpState_STATE_NC};
-	PpState current_pp_state{PpState::PpState_STATE_NC};
+	PpState last_pp_state { PpState::PpState_STATE_NC };
+	PpState current_pp_state { PpState::PpState_STATE_NC };
 
 	// This mutex locks all state type members
 	osMutexId_t state_mutex;

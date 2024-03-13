@@ -14,9 +14,9 @@
 #include "EVConfig.h"
 
 ControlPilot::ControlPilot(ControlPilot_HAL &_control_pilot_hal,
-		RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd) :
-		Task("ControlPilot", 2048 * 4), control_pilot_hal(_control_pilot_hal), remote_tx(
-				_remote_tx), power_switch(_power_switch), rcd(_rcd) {
+		RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd, ADE7978& _power_meter) :
+Task("ControlPilot", 2048 * 4), control_pilot_hal(_control_pilot_hal), remote_tx(
+		_remote_tx), power_switch(_power_switch), rcd(_rcd), power_meter(_power_meter) {
 
 	enable();
 	pwm_F();

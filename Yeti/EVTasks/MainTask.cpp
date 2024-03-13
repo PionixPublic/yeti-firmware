@@ -113,7 +113,7 @@ void StartMainTask(void *argument) {
 		printf("Start RemoteControl...\n");
 	static RemoteControlTX rc_tx(link);
 
-	static ControlPilot control_pilot(control_pilot_hal, rc_tx, ps, rcd);
+	static ControlPilot control_pilot(control_pilot_hal, rc_tx, ps, rcd, power_meter);
 
 	control_pilot.run(); // spins off thread and returns immediately
 
