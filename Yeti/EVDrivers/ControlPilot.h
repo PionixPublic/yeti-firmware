@@ -63,6 +63,7 @@ private:
 	void disable();
 
 	void run_state_machine();
+	void updatePowerMeter();
 
 	InternalCPState current_state { InternalCPState::Disabled };
 	InternalCPState last_state { InternalCPState::Disabled };
@@ -122,6 +123,7 @@ private:
 	const osMutexAttr_t state_mutex_attributes = { .name = "state_mutex" };
 
 	ErrorFlags error_flags;
+	ErrorFlags last_error_flags;
 };
 
 #endif // SRC_EVDRIVERS_CONTROLPILOT_H_

@@ -13,10 +13,22 @@
 
 #include "EVConfig.h"
 
+static bool compare_error_flags(const ErrorFlags &a, const ErrorFlags &b) {
+	return a.diode_fault == b.diode_fault
+			and a.rcd_selftest_failed == b.rcd_selftest_failed
+			and a.rcd_triggered == b.rcd_triggered
+			and a.ventilation_not_available == b.ventilation_not_available
+			and a.connector_lock_failed == b.connector_lock_failed
+			and a.cp_signal_fault == b.cp_signal_fault
+			and a.over_current == b.over_current;
+}
+
 ControlPilot::ControlPilot(ControlPilot_HAL &_control_pilot_hal,
-		RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd, ADE7978& _power_meter) :
-Task("ControlPilot", 2048 * 4), control_pilot_hal(_control_pilot_hal), remote_tx(
-		_remote_tx), power_switch(_power_switch), rcd(_rcd), power_meter(_power_meter) {
+		RemoteControlTX &_remote_tx, PowerSwitch &_power_switch, Rcd &_rcd,
+		ADE7978 &_power_meter) :
+		Task("ControlPilot", 2048 * 4), control_pilot_hal(_control_pilot_hal), remote_tx(
+				_remote_tx), power_switch(_power_switch), rcd(_rcd), power_meter(
+				_power_meter) {
 
 	enable();
 	pwm_F();
@@ -40,15 +52,16 @@ void ControlPilot::main() {
 	while (true) {
 		osDelay(50);
 
-		if (cnt++ % 8 == 0) {
+		if (cnt++ % 4 == 0) {
+			printf ("SENDING\n");
 			Telemetry t;
 			t.cp_voltage_hi = cp_hi;
 			t.cp_voltage_lo = cp_lo;
 			remote_tx.send_telemetry(t);
 
-			// FIXME this needs to come from somewhere else
-			PowerMeter p;
-			remote_tx.send_power_meter(p);
+			remote_tx.send_keep_alive();
+
+			updatePowerMeter();
 		}
 
 		osMutexWait(state_mutex, osWaitForever);
@@ -73,6 +86,12 @@ void ControlPilot::main() {
 		if (last_relais_state not_eq current_relais_state) {
 			last_relais_state = current_relais_state;
 			remote_tx.send_relais_state(current_relais_state);
+		}
+
+		// Send updates to EVerest if error flags changed
+		if (not compare_error_flags(last_error_flags, error_flags)) {
+			last_error_flags = error_flags;
+			remote_tx.send_error_flags(error_flags);
 		}
 
 		osMutexRelease(state_mutex);
@@ -374,4 +393,60 @@ void ControlPilot::connector_lock(bool lock) {
 		control_pilot_hal.lockMotorUnlock();
 		lock_sw_off_Tick = HAL_GetTick();
 	}
+}
+
+void ControlPilot::updatePowerMeter() {
+	PowerMeter p;
+
+	p.vrmsL1 = (double) power_meter.getVRMS(ADE7978::L1)
+			* ADE7978::VOLTAGE_UNIT;
+	p.vrmsL2 = (double) power_meter.getVRMS(ADE7978::L2)
+			* ADE7978::VOLTAGE_UNIT;
+	p.vrmsL3 = (double) power_meter.getVRMS(ADE7978::L3)
+			* ADE7978::VOLTAGE_UNIT;
+	p.irmsL1 = (double) power_meter.getIRMS(ADE7978::L1)
+			* ADE7978::CURRENT_UNIT;
+	p.irmsL2 = (double) power_meter.getIRMS(ADE7978::L2)
+			* ADE7978::CURRENT_UNIT;
+	p.irmsL3 = (double) power_meter.getIRMS(ADE7978::L3)
+			* ADE7978::CURRENT_UNIT;
+	p.irmsN = (double) power_meter.getIRMS(ADE7978::N) * ADE7978::CURRENT_UNIT;
+	p.wattHrL1 = (double) power_meter.getWATTHR(ADE7978::L1)
+			* ADE7978::DEFAULT_ENERGY_UNIT;
+	p.wattHrL2 = (double) power_meter.getWATTHR(ADE7978::L2)
+			* ADE7978::DEFAULT_ENERGY_UNIT;
+	p.wattHrL3 = (double) power_meter.getWATTHR(ADE7978::L3)
+			* ADE7978::DEFAULT_ENERGY_UNIT;
+	p.totalWattHr = power_meter.getTotalWATTHR() * ADE7978::DEFAULT_ENERGY_UNIT;
+
+	p.tempL1 = (float) power_meter.getTEMP(ADE7978::L1)
+			* ADE7978::TEMPERATURE_CELSIUS_SCALE
+			+ ADE7978::TEMPERATURE_CELSIUS_OFFSET;
+	p.tempL2 = (float) power_meter.getTEMP(ADE7978::L2)
+			* ADE7978::TEMPERATURE_CELSIUS_SCALE
+			+ ADE7978::TEMPERATURE_CELSIUS_OFFSET;
+	p.tempL3 = (float) power_meter.getTEMP(ADE7978::L3)
+			* ADE7978::TEMPERATURE_CELSIUS_SCALE
+			+ ADE7978::TEMPERATURE_CELSIUS_OFFSET;
+	p.tempN = (float) power_meter.getTEMP(ADE7978::N)
+			* ADE7978::TEMPERATURE_CELSIUS_SCALE
+			+ ADE7978::TEMPERATURE_CELSIUS_OFFSET;
+
+	p.wattL1 = (float) power_meter.getWATT(ADE7978::L1)
+			* ADE7978::DEFAULT_POWER_UNIT;
+	p.wattL2 = (float) power_meter.getWATT(ADE7978::L2)
+			* ADE7978::DEFAULT_POWER_UNIT;
+	p.wattL3 = (float) power_meter.getWATT(ADE7978::L3)
+			* ADE7978::DEFAULT_POWER_UNIT;
+	float t =
+			((float) power_meter.getPERIOD(ADE7978::L1) * ADE7978::PERIOD_UNIT);
+	p.freqL1 = ((t > 1. / 70. && t < 1. / 40.) ? 1. / t : 0);
+	t = ((float) power_meter.getPERIOD(ADE7978::L2) * ADE7978::PERIOD_UNIT);
+	p.freqL2 = ((t > 1. / 70. && t < 1. / 40.) ? 1. / t : 0);
+	t = ((float) power_meter.getPERIOD(ADE7978::L3) * ADE7978::PERIOD_UNIT);
+	p.freqL3 = ((t > 1. / 70. && t < 1. / 40.) ? 1. / t : 0);
+
+	p.phaseSeqError = (power_meter.getSTATUS1() & (1 << 19) ? true : false);
+
+	remote_tx.send_power_meter(p);
 }
