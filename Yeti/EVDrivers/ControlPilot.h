@@ -90,6 +90,7 @@ private:
 	bool is_voltage_in_range(float voltage, float center);
 
 	void start_timer(uint32_t msecs);
+	void stop_timer();
 	bool timer_elapsed();
 	uint32_t timer_countdown { 0 };
 	uint32_t timer_tick { 0 };
@@ -124,6 +125,8 @@ private:
 
 	ErrorFlags error_flags;
 	ErrorFlags last_error_flags;
+
+	bool last_power_on_allowed{false};
 };
 
 #endif // SRC_EVDRIVERS_CONTROLPILOT_H_

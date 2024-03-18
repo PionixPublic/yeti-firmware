@@ -97,8 +97,14 @@ void RemoteControlTX::send_keep_alive() {
 	msg_out.payload.keep_alive.hw_revision = 0;
 	msg_out.payload.keep_alive.protocol_version_major = 0;
 	msg_out.payload.keep_alive.protocol_version_minor = 1;
+	msg_out.payload.keep_alive.hwcap_min_current = 6;
+	msg_out.payload.keep_alive.hwcap_max_current = 32;
+	msg_out.payload.keep_alive.hwcap_min_phase_count = 1;
+	msg_out.payload.keep_alive.hwcap_max_phase_count = 3;
+	msg_out.payload.keep_alive.supports_changing_phases_during_charging = false;
 
 	strncpy(msg_out.payload.keep_alive.sw_version_string, VERSION_STRING, 50);
 	msg_out.payload.keep_alive.sw_version_string[50] = 0;
 	link.write(&msg_out);
+	printf ("Keep alive sent %i.\n", (int)msg_out.payload.keep_alive.time_stamp);
 }

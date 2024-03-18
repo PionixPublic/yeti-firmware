@@ -49,11 +49,12 @@ void ControlPilot::main() {
 
 	int cnt = 0;
 
+	bool led = false;
+
 	while (true) {
 		osDelay(50);
 
 		if (cnt++ % 4 == 0) {
-			printf ("SENDING\n");
 			Telemetry t;
 			t.cp_voltage_hi = cp_hi;
 			t.cp_voltage_lo = cp_lo;
@@ -62,6 +63,15 @@ void ControlPilot::main() {
 			remote_tx.send_keep_alive();
 
 			updatePowerMeter();
+
+			if (led) {
+				led = false;
+				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_SET);
+			} else {
+				led = true;
+				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_RESET);
+			}
+
 		}
 
 		osMutexWait(state_mutex, osWaitForever);
@@ -115,6 +125,12 @@ void ControlPilot::run_state_machine() {
 	// e.g. car may not follow PWM current limit within N seconds
 	check_over_current();
 
+	if (not power_on_allowed and last_power_on_allowed) {
+		power_off();
+	}
+
+	last_power_on_allowed = power_on_allowed;
+
 	// update currentState from Car reading if signal is stable
 	if (read_from_car(&current_state)) {
 		if (replugging_start) {
@@ -142,6 +158,12 @@ void ControlPilot::run_state_machine() {
 			// basically after the time is up, we wait for state B. If that is
 			// reached, we say it was done!
 		}
+
+		if (current_state not_eq InternalCPState::C
+				and current_state not_eq InternalCPState::D) {
+			stop_timer();
+		}
+
 		switch (current_state) {
 		case InternalCPState::Disabled:
 			// simply wait until someone enables us...
@@ -153,7 +175,7 @@ void ControlPilot::run_state_machine() {
 		case InternalCPState::A:
 			error_flags.diode_fault = false;
 			use_three_phase_confirmed = use_three_phase;
-			power_on_allowed = false;
+			//power_on_allowed = false;
 			error_flags.rcd_triggered = false;
 			pwm_off();
 			power_off();
@@ -168,17 +190,22 @@ void ControlPilot::run_state_machine() {
 
 		case InternalCPState::D:
 		case InternalCPState::C:
+
 			error_flags.diode_fault = false;
-			if (!pwm_running) { // C1
+			if (not pwm_running) { // C1
 				// Table A.6 Sequence 10.2: EV does not stop drawing power
 				// even if PWM stops. Stop within 7 seconds (E.g. Kona1!)
 				// EVerest should stop after 6 seconds already
-				if (last_pwm_running)
+
+				if (last_pwm_running) {
 					start_timer(7000);
+				}
+
 				if (timer_elapsed()) {
 					// force power off under load
 					power_off();
 				}
+
 			} else { // C2
 				if (power_on_allowed) {
 					// Table A.6: Sequence 4 EV ready to charge.
@@ -192,7 +219,6 @@ void ControlPilot::run_state_machine() {
 		case InternalCPState::F:
 			error_flags.diode_fault = false;
 			power_off();
-			pwm_off();
 			break;
 
 		case InternalCPState::DF:
@@ -209,7 +235,6 @@ void ControlPilot::pwm_off() {
 	control_pilot_hal.setPWM(1.01);
 	pwm_duty_cycle = 1.;
 	pwm_running = false;
-	power_on_allowed = false;
 }
 
 void ControlPilot::pwm_on(float dc) {
@@ -233,7 +258,7 @@ void ControlPilot::pwm_F() {
 	pwm_duty_cycle = 0.;
 	current_state = InternalCPState::F;
 	pwm_running = false;
-	power_on_allowed = false;
+	//power_on_allowed = false;
 }
 
 void ControlPilot::enable() {
@@ -372,6 +397,10 @@ void ControlPilot::rcd_disable() {
 void ControlPilot::start_timer(uint32_t msecs) {
 	timer_countdown = msecs;
 	timer_tick = HAL_GetTick();
+}
+
+void ControlPilot::stop_timer() {
+	timer_tick = 0;
 }
 
 bool ControlPilot::timer_elapsed() {

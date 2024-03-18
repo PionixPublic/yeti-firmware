@@ -43,10 +43,11 @@ public:
     bool executeSelfTest();
     void emergencySwitchOff();
     void resetEmergencySwitchOff();
+    bool relaisHealthy;
 
 private:
     bool relaisOn;
-    bool relaisHealthy;
+
 
     TIM_HandleTypeDef *pwmTimer;
 

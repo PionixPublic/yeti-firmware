@@ -45,7 +45,7 @@ public:
 
     virtual void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc);
 
-    static constexpr uint8_t AVG = 10;
+    static constexpr uint8_t AVG = 50;
 
 private:
     ADC_HandleTypeDef *adc;

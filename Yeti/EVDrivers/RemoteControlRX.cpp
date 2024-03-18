@@ -47,7 +47,7 @@ void RemoteControlRX::main() {
 
 	while (1) {
 		if (timerElapsed()) {
-			control_pilot.pwm_F();
+			//control_pilot.pwm_F();
 			resetTimer();
 		}
 
