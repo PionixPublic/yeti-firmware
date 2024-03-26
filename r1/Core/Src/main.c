@@ -1105,6 +1105,19 @@ void StartDefaultTask(void *argument)
   /* USER CODE END 5 */
 }
 
+_ssize_t _write_r(struct _reent *ptr, /* Don't worry about what's in this for the simple case */
+                  int fd, /* ignored */
+                  const void* buf, /* the data to be sent out the UART */
+                  size_t      cnt) /* the number of bytes to be sent */
+{
+   /* Replace "huart3" with the pointer to the UART or USART instance you are using
+   * in your project
+   */
+   HAL_UART_Transmit(&huart2, (uint8_t*)buf, cnt, 1000);
+
+   return (_ssize_t)cnt;
+}
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
