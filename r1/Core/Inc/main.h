@@ -96,8 +96,6 @@ void Error_Handler(void);
 #define CFG_GPIO_Port GPIOC
 #define GPIO2_Pin GPIO_PIN_8
 #define GPIO2_GPIO_Port GPIOA
-#define DISPLAY_CS_LED1_Pin GPIO_PIN_12
-#define DISPLAY_CS_LED1_GPIO_Port GPIOA
 #define POWERSWITCH_L1_Pin GPIO_PIN_15
 #define POWERSWITCH_L1_GPIO_Port GPIOA
 #define GPIO4_Pin GPIO_PIN_10
