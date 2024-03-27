@@ -104,8 +104,6 @@ void Error_Handler(void);
 #define GPIO3_GPIO_Port GPIOC
 #define MIRROR_L1_Pin GPIO_PIN_10
 #define MIRROR_L1_GPIO_Port GPIOA
-#define GPS_1PPS_Pin GPIO_PIN_4
-#define GPS_1PPS_GPIO_Port GPIOB
 #define GPIO1_Pin GPIO_PIN_5
 #define GPIO1_GPIO_Port GPIOB
 #define LOCK_F_Pin GPIO_PIN_6

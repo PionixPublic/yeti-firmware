@@ -1037,12 +1037,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(MIRROR_L1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : GPS_1PPS_Pin */
-  GPIO_InitStruct.Pin = GPS_1PPS_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPS_1PPS_GPIO_Port, &GPIO_InitStruct);
-
   /*Configure GPIO pins : GPIO1_Pin LOCK_F_Pin LOCK_R_Pin CP_ENABLE_Pin */
   GPIO_InitStruct.Pin = GPIO1_Pin|LOCK_F_Pin|LOCK_R_Pin|CP_ENABLE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
