@@ -66,10 +66,8 @@ void ControlPilot::main() {
 
 			if (led) {
 				led = false;
-				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_SET);
 			} else {
 				led = true;
-				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_RESET);
 			}
 
 		}
