@@ -96,8 +96,6 @@ void Error_Handler(void);
 #define CFG_GPIO_Port GPIOC
 #define GPIO2_Pin GPIO_PIN_8
 #define GPIO2_GPIO_Port GPIOA
-#define DISPLAY_DC_LED2_Pin GPIO_PIN_10
-#define DISPLAY_DC_LED2_GPIO_Port GPIOA
 #define DISPLAY_RESET_LED3_Pin GPIO_PIN_11
 #define DISPLAY_RESET_LED3_GPIO_Port GPIOA
 #define DISPLAY_CS_LED1_Pin GPIO_PIN_12
