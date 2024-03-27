@@ -108,7 +108,7 @@ void Error_Handler(void);
 #define GPIO1_GPIO_Port GPIOB
 #define LOCK_F_Pin GPIO_PIN_4
 #define LOCK_F_GPIO_Port GPIOB
-#define LOCK_R_Pin GPIO_PIN_7
+#define LOCK_R_Pin GPIO_PIN_12
 #define LOCK_R_GPIO_Port GPIOB
 #define CP_ENABLE_Pin GPIO_PIN_9
 #define CP_ENABLE_GPIO_Port GPIOB
