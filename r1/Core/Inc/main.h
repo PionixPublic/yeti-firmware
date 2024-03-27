@@ -87,7 +87,7 @@ void Error_Handler(void);
 #define PM_IRQ1_GPIO_Port GPIOB
 #define PM_IRQ1_EXTI_IRQn EXTI2_IRQn
 #define MIRROR_L2L3_Pin GPIO_PIN_12
-#define MIRROR_L2L3_GPIO_Port GPIOB
+#define MIRROR_L2L3_GPIO_Port GPIOA
 #define RCD_PWM_IN_Pin GPIO_PIN_6
 #define RCD_PWM_IN_GPIO_Port GPIOC
 #define POWERSWITCH_L2L3_Pin GPIO_PIN_7
@@ -110,8 +110,8 @@ void Error_Handler(void);
 #define GPIO4_GPIO_Port GPIOC
 #define GPIO3_Pin GPIO_PIN_11
 #define GPIO3_GPIO_Port GPIOC
-#define MIRROR_L1_Pin GPIO_PIN_12
-#define MIRROR_L1_GPIO_Port GPIOC
+#define MIRROR_L1_Pin GPIO_PIN_10
+#define MIRROR_L1_GPIO_Port GPIOA
 #define GPS_1PPS_Pin GPIO_PIN_4
 #define GPS_1PPS_GPIO_Port GPIOB
 #define GPIO1_Pin GPIO_PIN_5
