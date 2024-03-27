@@ -106,7 +106,7 @@ void Error_Handler(void);
 #define MIRROR_L1_GPIO_Port GPIOA
 #define GPIO1_Pin GPIO_PIN_5
 #define GPIO1_GPIO_Port GPIOB
-#define LOCK_F_Pin GPIO_PIN_6
+#define LOCK_F_Pin GPIO_PIN_4
 #define LOCK_F_GPIO_Port GPIOB
 #define LOCK_R_Pin GPIO_PIN_7
 #define LOCK_R_GPIO_Port GPIOB
