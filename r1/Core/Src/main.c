@@ -973,6 +973,10 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO1_Pin|LOCK_F_Pin|LOCK_R_Pin|CP_ENABLE_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level for power switch*/
+  HAL_GPIO_WritePin(POWERSWITCH_L1_GPIO_Port, POWERSWITCH_L1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(POWERSWITCH_L2L3_GPIO_Port, POWERSWITCH_L2L3_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : RCD_TEST_Pin GPIO4_Pin GPIO3_Pin */
   GPIO_InitStruct.Pin = RCD_TEST_Pin|GPIO4_Pin|GPIO3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -1055,6 +1059,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins :POWERSWITCH_L2L3_Pin*/
+  GPIO_InitStruct.Pin = POWERSWITCH_L2L3_Pin;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(POWERSWITCH_L2L3_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins :POWERSWITCH_L1_Pin*/
+  GPIO_InitStruct.Pin = POWERSWITCH_L1_Pin;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(POWERSWITCH_L1_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI2_IRQn, 5, 0);

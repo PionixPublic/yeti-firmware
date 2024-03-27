@@ -90,8 +90,8 @@ void Error_Handler(void);
 #define MIRROR_L2L3_GPIO_Port GPIOA
 #define RCD_PWM_IN_Pin GPIO_PIN_6
 #define RCD_PWM_IN_GPIO_Port GPIOC
-#define POWERSWITCH_L2L3_Pin GPIO_PIN_7
-#define POWERSWITCH_L2L3_GPIO_Port GPIOC
+#define POWERSWITCH_L2L3_Pin GPIO_PIN_9
+#define POWERSWITCH_L2L3_GPIO_Port GPIOA
 #define CFG_Pin GPIO_PIN_8
 #define CFG_GPIO_Port GPIOC
 #define GPIO2_Pin GPIO_PIN_8

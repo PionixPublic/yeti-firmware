@@ -6,6 +6,7 @@
  */
 
 #include "PowerSwitch.h"
+#include "main.h"
 
 PowerSwitch::PowerSwitch(TIM_HandleTypeDef *_pwmTimer, Gpio &_l1mirror,
                          Gpio &_l2l3mirror) :
@@ -85,13 +86,21 @@ bool PowerSwitch::switchOff() {
 }
 
 void PowerSwitch::setPWML1(uint32_t dc) {
-    uint16_t counterTicks = dc * 4800 / 100;
-    pwmTimer->Instance->CCR1 = counterTicks;
+//    uint16_t counterTicks = dc * 4800 / 100;
+//    pwmTimer->Instance->CCR1 = counterTicks;
+	if(dc)
+		HAL_GPIO_WritePin(POWERSWITCH_L1_GPIO_Port, POWERSWITCH_L1_Pin, GPIO_PIN_SET);
+	else
+		HAL_GPIO_WritePin(POWERSWITCH_L1_GPIO_Port, POWERSWITCH_L1_Pin, GPIO_PIN_RESET);
 }
 
 void PowerSwitch::setPWML2L3(uint32_t dc) {
-    uint16_t counterTicks = dc * 4800 / 100;
-    pwmTimer->Instance->CCR2 = counterTicks;
+//    uint16_t counterTicks = dc * 4800 / 100;
+//    pwmTimer->Instance->CCR2 = counterTicks;
+	if(dc)
+		HAL_GPIO_WritePin(POWERSWITCH_L2L3_GPIO_Port, POWERSWITCH_L2L3_Pin, GPIO_PIN_SET);
+	else
+		HAL_GPIO_WritePin(POWERSWITCH_L2L3_GPIO_Port, POWERSWITCH_L2L3_Pin, GPIO_PIN_RESET);
 }
 
 bool PowerSwitch::executeSelfTest() {
