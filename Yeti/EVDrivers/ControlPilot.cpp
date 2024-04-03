@@ -49,8 +49,6 @@ void ControlPilot::main() {
 
 	int cnt = 0;
 
-	bool led = false;
-
 	while (true) {
 		osDelay(50);
 
@@ -64,14 +62,12 @@ void ControlPilot::main() {
 
 			updatePowerMeter();
 
-			if (led) {
-				led = false;
-				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_SET);
-			} else {
-				led = true;
-				HAL_GPIO_WritePin(GPIO0_GPIO_Port, GPIO0_Pin, GPIO_PIN_RESET);
-			}
+		}
 
+		if (cnt % 30 == 0 || cnt % 30 == 4) {
+			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_SET);
+		} else if (cnt % 30 == 2 || cnt % 30 == 6) {
+			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET);
 		}
 
 		osMutexWait(state_mutex, osWaitForever);
