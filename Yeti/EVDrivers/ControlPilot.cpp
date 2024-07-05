@@ -329,6 +329,7 @@ bool ControlPilot::is_voltage_in_range(float voltage, float center) {
 
 void ControlPilot::set_three_phases(bool n) {
 	use_three_phase = n;
+	use_three_phase_confirmed = n;
 }
 
 bool ControlPilot::power_on(bool threePhase) {

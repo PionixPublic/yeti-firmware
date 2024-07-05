@@ -108,10 +108,16 @@ void StartDefaultTask(void *argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  if (reset_flags==0x12ABCDEF) {
+
+
+	if (reset_flags==0x12ABCDEF) {
 	  for (int i=0;i<100;i++) reset_flags = i;
 	  restartInBootLoaderMode_Step2();
   }
+
+	__HAL_RCC_USART1_CLK_ENABLE();
+	__HAL_RCC_USART1_FORCE_RESET();
+	__HAL_RCC_USART1_RELEASE_RESET();
 
   /* USER CODE END 1 */
 

@@ -211,7 +211,9 @@ bool MgmtLink::read(EverestToMcu *msg, uint32_t timeout) {
 bool MgmtLink::write(McuToEverest *msg) {
 
 	while (huart->gState != HAL_UART_STATE_READY) {
+		//printf ("R");
 	};
+	//printf ("READY DONE\n");
 
 	pb_ostream_t ostream = pb_ostream_from_buffer(tx_packet_buf,
 			TX_MAX_PAYLOAD_SIZE);

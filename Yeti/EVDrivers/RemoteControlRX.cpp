@@ -99,6 +99,14 @@ void RemoteControlRX::main() {
 				control_pilot.allow_power_on(msg_in.payload.allow_power_on);
 				break;
 
+			case EverestToMcu_set_number_of_phases_tag:
+#ifdef REMOTECONTROL_CPP_ENABLE_PRINTF
+                printf("Received set number of phases %i\n",
+                       (int)msg_in.payload.set_number_of_phases);
+#endif
+				control_pilot.set_three_phases(msg_in.payload.set_number_of_phases);
+				break;
+
 			case EverestToMcu_reset_tag:
 #ifdef REMOTECONTROL_CPP_ENABLE_PRINTF
                 printf("Received reset\n");

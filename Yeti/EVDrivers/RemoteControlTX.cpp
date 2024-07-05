@@ -26,6 +26,7 @@ RemoteControlTX::~RemoteControlTX() {
 
 void RemoteControlTX::send_reset_reason(ResetReason r) {
 	// OsMutexLockGuard lock(sendMutex);
+	printf ("------------------------------- RESET TAG SENT ------------------");
 	McuToEverest msg_out = McuToEverest_init_default;
 	msg_out.which_payload = McuToEverest_reset_tag;
 	msg_out.payload.reset = r;
@@ -101,7 +102,7 @@ void RemoteControlTX::send_keep_alive() {
 	msg_out.payload.keep_alive.hwcap_max_current = 32;
 	msg_out.payload.keep_alive.hwcap_min_phase_count = 1;
 	msg_out.payload.keep_alive.hwcap_max_phase_count = 3;
-	msg_out.payload.keep_alive.supports_changing_phases_during_charging = false;
+	msg_out.payload.keep_alive.supports_changing_phases_during_charging = true;
 
 	strncpy(msg_out.payload.keep_alive.sw_version_string, VERSION_STRING, 50);
 	msg_out.payload.keep_alive.sw_version_string[50] = 0;

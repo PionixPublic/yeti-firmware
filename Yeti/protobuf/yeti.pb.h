@@ -136,6 +136,7 @@ typedef struct _EverestToMcu {
         uint32_t pwm_duty_cycle; /* in 0.01 %, 0 = State F, 10000 = X1 */
         bool allow_power_on;
         bool reset;
+        bool set_number_of_phases;
     } payload;
 } EverestToMcu;
 
@@ -256,6 +257,7 @@ extern "C" {
 #define EverestToMcu_pwm_duty_cycle_tag          103
 #define EverestToMcu_allow_power_on_tag          104
 #define EverestToMcu_reset_tag                   105
+#define EverestToMcu_set_number_of_phases_tag    106
 
 /* Struct field encoding specification for nanopb */
 #define EverestToMcu_FIELDLIST(X, a) \
@@ -264,7 +266,8 @@ X(a, STATIC,   ONEOF,    MESSAGE,  (payload,keep_alive,payload.keep_alive), 100)
 X(a, STATIC,   ONEOF,    BOOL,     (payload,connector_lock,payload.connector_lock), 102) \
 X(a, STATIC,   ONEOF,    UINT32,   (payload,pwm_duty_cycle,payload.pwm_duty_cycle), 103) \
 X(a, STATIC,   ONEOF,    BOOL,     (payload,allow_power_on,payload.allow_power_on), 104) \
-X(a, STATIC,   ONEOF,    BOOL,     (payload,reset,payload.reset), 105)
+X(a, STATIC,   ONEOF,    BOOL,     (payload,reset,payload.reset), 105) \
+X(a, STATIC,   ONEOF,    BOOL,     (payload,set_number_of_phases,payload.set_number_of_phases), 106)
 #define EverestToMcu_CALLBACK NULL
 #define EverestToMcu_DEFAULT NULL
 #define EverestToMcu_payload_firmware_update_MSGTYPE FirmwareUpdate
